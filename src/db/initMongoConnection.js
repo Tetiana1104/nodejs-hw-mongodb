@@ -7,6 +7,7 @@ const MONGO_URI = `mongodb+srv://tanyakorkh1104:${process.env.MONGODB_PASSWORD}@
 
 export async function initMongoConnection() {
   try {
+    console.log('🟢 Connecting to MongoDB:', MONGO_URI);
     await mongoose.connect(MONGO_URI);
     console.log('✅ MongoDB connected successfully!');
   } catch (error) {
