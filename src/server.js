@@ -18,6 +18,10 @@ export function setupServer() {
   app.use(cors());
   app.use(pino());
 
+  app.get('/', (req, res) => {
+    res.json({ message: 'API is working!' });
+  });
+
   app.use('/contacts', contactsRoutes);
 
   app.use(notFoundHandler);
