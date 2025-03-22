@@ -9,12 +9,43 @@ import {
 } from '../services/contacts.js';
 
 export async function getAllContacts(req, res) {
-  const contacts = await fetchAllContacts();
-  res.status(200).json({
-    status: 200,
-    message: 'Successfully found contacts!',
-    data: contacts,
-  });
+  try {
+    const {
+      page = 1,
+      perPage = 10,
+      sortBy = 'name',
+      sortOrder = 'asc',
+      type,
+      isFavourite,
+    } = req.query;
+
+    const pageNumber = parseInt(page, 10);
+    const itemsPerPage = parseInt(perPage, 10);
+
+    if (isNaN(pageNumber) || isNaN(itemsPerPage)) {
+      throw createHttpError(400, 'Invalid pagination parameters');
+    }
+
+    const contacts = await fetchAllContacts({
+      page: pageNumber,
+      perPage: itemsPerPage,
+      sortBy,
+      sortOrder,
+      type,
+      isFavourite,
+    });
+
+    res.status(200).json({
+      status: 200,
+      message: 'Successfully found contacts!',
+      data: contacts,
+    });
+  } catch (error) {
+    res.status(error.status || 500).json({
+      status: error.status || 500,
+      message: error.message || 'Something went wrong',
+    });
+  }
 }
 
 export async function getContactById(req, res) {
