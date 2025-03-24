@@ -1,4 +1,5 @@
 import createHttpError from 'http-errors';
+
 import mongoose from 'mongoose';
 import {
   fetchAllContacts,
@@ -9,43 +10,42 @@ import {
 } from '../services/contacts.js';
 
 export async function getAllContacts(req, res) {
-  try {
-    const {
-      page = 1,
-      perPage = 10,
-      sortBy = 'name',
-      sortOrder = 'asc',
-      type,
-      isFavourite,
-    } = req.query;
+  const {
+    page = 1,
+    perPage = 10,
+    sortBy = 'name',
+    sortOrder = 'asc',
+    type,
+    isFavourite,
+  } = req.query;
 
-    const pageNumber = parseInt(page, 10);
-    const itemsPerPage = parseInt(perPage, 10);
-
-    if (isNaN(pageNumber) || isNaN(itemsPerPage)) {
-      throw createHttpError(400, 'Invalid pagination parameters');
-    }
-
-    const contacts = await fetchAllContacts({
-      page: pageNumber,
-      perPage: itemsPerPage,
-      sortBy,
-      sortOrder,
-      type,
-      isFavourite,
-    });
-
-    res.status(200).json({
-      status: 200,
-      message: 'Successfully found contacts!',
-      data: contacts,
-    });
-  } catch (error) {
-    res.status(error.status || 500).json({
-      status: error.status || 500,
-      message: error.message || 'Something went wrong',
-    });
+  const validSortOrders = ['asc', 'desc'];
+  if (!validSortOrders.includes(sortOrder)) {
+    throw createHttpError(400, 'Invalid sortOrder. Use "asc" or "desc".');
   }
+
+  const validSortFields = ['name', 'email', 'phoneNumber'];
+  if (!validSortFields.includes(sortBy)) {
+    throw createHttpError(
+      400,
+      `Invalid sortBy. Use one of: ${validSortFields.join(', ')}`,
+    );
+  }
+  const contacts = await fetchAllContacts({
+    page: Number(page),
+    perPage: Number(perPage),
+    sortBy,
+    sortOrder,
+    type,
+    isFavourite,
+    userId: req.user._id,
+  });
+
+  res.status(200).json({
+    status: 200,
+    message: 'Successfully found contacts!',
+    data: contacts,
+  });
 }
 
 export async function getContactById(req, res) {
@@ -54,7 +54,7 @@ export async function getContactById(req, res) {
     throw createHttpError(400, 'Invalid contact ID format');
   }
 
-  const contact = await fetchContactById(contactId);
+  const contact = await fetchContactById(contactId, req.user._id);
 
   if (!contact) {
     throw createHttpError(404, 'Contact not found');
@@ -68,7 +68,7 @@ export async function getContactById(req, res) {
 }
 
 export const createContactController = async (req, res) => {
-  const contact = await createContact(req.body);
+  const contact = await createContact(req.body, req.user._id);
 
   res.status(201).json({
     status: 201,
@@ -79,7 +79,10 @@ export const createContactController = async (req, res) => {
 
 export const deleteContactController = async (req, res) => {
   const { contactId } = req.params;
-  const deleteContact = await removeContact(contactId);
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
+    throw createHttpError(400, 'Invalid contact ID format');
+  }
+  const deleteContact = await removeContact(contactId, req.user._id);
 
   if (!deleteContact) {
     throw createHttpError(404, 'Contact not found');
@@ -89,7 +92,7 @@ export const deleteContactController = async (req, res) => {
 
 export const patchContactController = async (req, res) => {
   const { contactId } = req.params;
-  const result = await updateContact(contactId, req.body);
+  const result = await updateContact(contactId, req.body, req.user._id);
 
   if (!result) {
     throw createHttpError(404, 'Contact not found');

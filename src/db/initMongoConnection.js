@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import { Session } from '../models/session.js';
+import { User } from '../models/user.js';
 
 dotenv.config();
 
@@ -15,3 +17,4 @@ export async function initMongoConnection() {
     process.exit(1);
   }
 }
+export { User, Session };
