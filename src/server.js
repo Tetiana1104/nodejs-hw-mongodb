@@ -21,6 +21,10 @@ export function setupServer() {
   app.use(cors());
   app.use(pino());
 
+  app.get('/', (req, res) => {
+    res.status(200).json({ message: 'API is running!' });
+  });
+
   app.use('/auth', authRouter);
   app.use('/contacts', contactsRouters);
 
