@@ -28,12 +28,12 @@ router.post(
   validateBody(createContactSchema),
   ctrlWrapper(createContactController),
 );
-router.put(
-  '/:contactId',
-  isValidId,
-  validateBody(createContactSchema),
-  ctrlWrapper(),
-);
+// router.put(
+//   '/:contactId',
+//   isValidId,
+//   validateBody(createContactSchema),
+//   ctrlWrapper(),
+// );
 router.patch(
   '/:contactId',
   isValidId,
