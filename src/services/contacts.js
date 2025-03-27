@@ -16,11 +16,7 @@ export async function fetchAllContacts({
     filter.contactType = type;
   }
   if (isFavourite !== undefined) {
-    if (isFavourite === 'true') {
-      filter.isFavourite = true;
-    } else if (isFavourite === 'false') {
-      filter.isFavourite = false;
-    }
+    filter.isFavourite = isFavourite === 'true';
   }
 
   const totalItems = await Contact.countDocuments(filter);
@@ -41,7 +37,7 @@ export async function fetchAllContacts({
 }
 
 export async function fetchContactById(contactId, userId) {
-  return await Contact.findById({ _id: contactId, userId });
+  return await Contact.findOne({ _id: contactId, userId });
 }
 
 export const createContact = async (payload, userId) => {
@@ -50,7 +46,7 @@ export const createContact = async (payload, userId) => {
 };
 
 export const removeContact = async (contactId, userId) => {
-  const deleteContact = await Contact.findByIdAndDelete({
+  const deleteContact = await Contact.findOneAndDelete({
     _id: contactId,
     userId,
   });
@@ -58,7 +54,7 @@ export const removeContact = async (contactId, userId) => {
 };
 
 export const updateContact = async (contactId, payload, userId) => {
-  const contact = await Contact.findByIdAndUpdate(
+  const contact = await Contact.findOneAndUpdate(
     { _id: contactId, userId },
     payload,
     {
