@@ -1,4 +1,5 @@
 import { Contact } from '../models/Contact.js';
+import mongoose from 'mongoose';
 
 export async function fetchAllContacts({
   page = 1,
@@ -15,6 +16,7 @@ export async function fetchAllContacts({
   if (type) {
     filter.contactType = type;
   }
+
   if (isFavourite !== undefined) {
     filter.isFavourite = isFavourite === 'true';
   }
@@ -37,7 +39,11 @@ export async function fetchAllContacts({
 }
 
 export async function fetchContactById(contactId, userId) {
-  return await Contact.findOne({ _id: contactId, userId });
+  return await Contact.findOne({
+    _id: contactId,
+    userId:
+      typeof userId === 'string' ? new mongoose.Types.ObjectId(userId) : userId,
+  });
 }
 
 export const createContact = async (payload, userId) => {
@@ -48,18 +54,23 @@ export const createContact = async (payload, userId) => {
 export const removeContact = async (contactId, userId) => {
   const deleteContact = await Contact.findOneAndDelete({
     _id: contactId,
-    userId,
+    userId:
+      typeof userId === 'string' ? new mongoose.Types.ObjectId(userId) : userId,
   });
   return deleteContact;
 };
 
 export const updateContact = async (contactId, payload, userId) => {
   const contact = await Contact.findOneAndUpdate(
-    { _id: contactId, userId },
-    payload,
     {
-      new: true,
+      _id: contactId,
+      userId:
+        typeof userId === 'string'
+          ? new mongoose.Types.ObjectId(userId)
+          : userId,
     },
+    payload,
+    { new: true },
   );
   return contact;
 };
