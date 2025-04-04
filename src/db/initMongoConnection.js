@@ -5,7 +5,8 @@ import { User } from '../models/user.js';
 
 dotenv.config();
 
-const MONGO_URI = `mongodb+srv://tanyakorkh1104:${process.env.MONGODB_PASSWORD}@contacts-cluster.uofa3.mongodb.net/contactsDB?retryWrites=true&w=majority&appName=contacts-cluster`;
+// const MONGO_URI = `mongodb+srv://tanyakorkh1104:${process.env.MONGODB_PASSWORD}@contacts-cluster.uofa3.mongodb.net/contactsDB?retryWrites=true&w=majority`;
+const MONGO_URI = process.env.MONGODB_URL;
 
 export async function initMongoConnection() {
   try {

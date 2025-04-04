@@ -28,6 +28,10 @@ const contactSchema = new mongoose.Schema(
       default: 'personal',
       required: true,
     },
+    photo: {
+      type: String,
+      default: '',
+    },
   },
   { timestamps: true },
 );
