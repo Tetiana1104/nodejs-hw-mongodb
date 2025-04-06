@@ -71,10 +71,24 @@ export async function getContactById(req, res) {
   });
 }
 
+// export const createContactController = async (req, res) => {
+//   if (req.file) {
+//     const photoUrl = await saveFileToCloudinary(req.file.path);
+//     req.body.photo = photoUrl;
+//   }
+
 export const createContactController = async (req, res) => {
+  console.log('🟨 REQ.FILE:', req.file);
+  console.log('🟨 FILE PATH:', req.file?.path);
+
   if (req.file) {
-    const photoUrl = await saveFileToCloudinary(req.file.path);
-    req.body.photo = photoUrl;
+    try {
+      const photoUrl = await saveFileToCloudinary(req.file.path);
+      req.body.photo = photoUrl;
+    } catch (error) {
+      console.error('❌ Error uploading to Cloudinary:', error);
+      throw createHttpError(500, 'Failed to upload image to Cloudinary');
+    }
   }
 
   const contact = await createContact(req.body, req.user._id);
