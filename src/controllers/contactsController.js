@@ -2,7 +2,7 @@ import createHttpError from 'http-errors';
 
 import mongoose from 'mongoose';
 
-import { saveFileToCloudinary } from '../services/saveFileToCloudinary.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
 import {
@@ -71,12 +71,6 @@ export async function getContactById(req, res) {
   });
 }
 
-// export const createContactController = async (req, res) => {
-//   if (req.file) {
-//     const photoUrl = await saveFileToCloudinary(req.file.path);
-//     req.body.photo = photoUrl;
-//   }
-
 export const createContactController = async (req, res) => {
   console.log('🟨 REQ.FILE:', req.file);
   console.log('🟨 FILE PATH:', req.file?.path);
@@ -118,11 +112,7 @@ export const patchContactController = async (req, res) => {
   let photoUrl;
 
   if (req.file) {
-    if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
-      photoUrl = await saveFileToCloudinary(req.file.path);
-    } else {
-      photoUrl = await saveFileToUploadDir(req.file);
-    }
+    photoUrl = await saveFileToCloudinary(req.file.path);
   }
 
   const updatedContact = await updateContact(
