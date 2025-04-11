@@ -41,6 +41,10 @@ export function setupServer() {
   app.use('/contacts', contactsRouters);
   app.use('/uploads', express.static(UPLOAD_DIR));
 
+  app.get('/', (req, res) => {
+    res.redirect('/api-docs');
+  });
+
   app.use(notFoundHandler);
   app.use(errorHandler);
 
