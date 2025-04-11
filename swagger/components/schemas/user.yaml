@@ -1,0 +1,18 @@
+type: object
+required:
+  - userId
+  - email
+  - name
+properties:
+  userId:
+    type: string
+    description: Unique identifier of the user
+    example: 67f6949e8ceafeed1f512fc3
+  email:
+    type: string
+    description: User email address
+    example: inna.k@example.com
+  name:
+    type: string
+    description: Full name of the user
+    example: Inna Kovalenko

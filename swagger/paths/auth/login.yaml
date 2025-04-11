@@ -1,0 +1,49 @@
+tags:
+  - Auth
+summary: Login user
+operationId: loginUser
+description: Logs in a user using email and password
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+          - password
+        properties:
+          email:
+            type: string
+            example: inna.k@example.com
+          password:
+            type: string
+            example: Passw0rd2025
+responses:
+  '200':
+    description: Login successful
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Login successful
+            data:
+              type: object
+              properties:
+                accessToken:
+                  type: string
+                  example: your-access-token-here
+  '401':
+    $ref: ../../components/responses/401.yaml

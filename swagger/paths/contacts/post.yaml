@@ -1,0 +1,67 @@
+tags:
+  - Contacts
+summary: Create a new contact
+operationId: createContact
+description: Create a new contact with optional photo upload
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        required:
+          - name
+          - phoneNumber
+          - contactType
+        properties:
+          name:
+            type: string
+            description: Full name of the contact
+            example: Inna Kovalenko
+          phoneNumber:
+            type: string
+            description: Contact phone number
+            example: '380000000099'
+          contactType:
+            type: string
+            description: Type of contact
+            enum: [work, home, personal]
+            example: work
+          isFavourite:
+            type: boolean
+            description: Mark contact as favourite
+            example: true
+          email:
+            type: string
+            description: Email address
+            example: inna.k@example.com
+          photo:
+            type: string
+            format: binary
+            description: Upload contact photo (optional)
+responses:
+  '201':
+    description: Contact created successfully
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: Successfully created a contact
+            data:
+              $ref: ../../components/schemas/contact.yaml
+  '401':
+    $ref: ../../components/responses/401.yaml
+  '500':
+    $ref: ../../components/responses/500.yaml
