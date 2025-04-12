@@ -15,7 +15,7 @@ tags:
 
 servers:
   - url: http://localhost:3000
-  - url: https://contacts-hw6-images-mail.onrender.com
+  - url: https://swagger-docs-hw7-tk.onrender.com
 
 paths:
   /contacts/{id}:
